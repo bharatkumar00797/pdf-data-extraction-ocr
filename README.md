@@ -1,79 +1,84 @@
-# PDF Data Extraction & OCR Comparison Tool
+# PDF Data Extraction & OCR Tools
 
-Python-based project to extract data from scanned PDF annual reports using OCR, convert content into Word and Excel formats, and verify data accuracy by comparing multiple scanned PDFs against a compiled Excel-to-PDF file.
+A small collection of Python scripts I built to work with scanned PDF reports.
 
-## Features
+I needed to pull data out of a bunch of old annual reports (most of them were just scanned images) and then check how accurate a compiled Excel version was against the originals. These scripts helped me do that.
 
-- Extract text from normal (text-based) PDFs
-- Perform OCR on scanned / image-based PDFs
-- Convert extracted data into Word (`.docx`) and Excel (`.xlsx`)
-- Compare one Excel-converted PDF against 15 original scanned annual reports
-- Generate comparison reports showing matched and unmatched data points
+---
 
-## Tech Stack
+## What it does
 
-- Python 3.12
-- `pdfplumber` – text & table extraction
-- `pdf2image` + Tesseract OCR – scanned document processing
-- `python-docx` – Word document generation
-- `openpyxl` – Excel file generation
-- `pytesseract` – OCR interface
+- Extract text from normal PDFs
+- Run OCR on scanned/image-based PDFs
+- Save the extracted text into Word and Excel files
+- Compare numbers from one clean PDF against text extracted from 15 scanned reports
 
-## Project Structure
+---
 
-| File | Description |
-|------|-------------|
-| `extract_simple.py` | Basic text extraction from PDFs into Word + Excel |
-| `extract_ocr.py` | OCR extraction from scanned PDFs |
-| `compare_excel_vs_15pdfs.py` | Full comparison between Excel PDF and 15 scanned reports |
-| `requirements.txt` | Python dependencies |
+## Files
 
-## Setup
+| Script | What it does |
+|--------|--------------|
+| `extract_simple.py` | Basic text extraction (works only if the PDF has selectable text) |
+| `extract_ocr.py` | Converts PDF pages to images and runs OCR |
+| `compare_excel_vs_15pdfs.py` | OCRs all 15 reports and checks which numbers from the Excel PDF appear in them |
 
-1. Create and activate a virtual environment:
-```bash
-python -m venv myenv
-myenv\Scripts\activate          # Windows
-```
+---
 
-2. Install dependencies:
+## Requirements
+
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Install system dependencies:
-   - **Tesseract OCR**: Download from [UB Mannheim](https://github.com/UB-Mannheim/tesseract/wiki)
-   - **Poppler**: Required by `pdf2image` (Windows builds available on GitHub)
+You also need two things installed on your system:
 
-4. Update the file paths inside the scripts (PDF folders, Tesseract path, Poppler path).
+1. **Tesseract OCR**  
+   Download the Windows installer from here:  
+   https://github.com/UB-Mannheim/tesseract/wiki
 
-## Usage
+2. **Poppler** (needed by pdf2image)  
+   Get the Windows build and extract it somewhere simple like `C:\poppler`
+
+After installing, open the scripts and update these two lines:
+
+```python
+TESSERACT_PATH = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+POPPLER_PATH   = r"C:\poppler\Library\bin"
+```
+
+Also change the folder paths at the top of each script to point to your own PDF files.
+
+---
+
+## How to run
 
 ```bash
-# Simple text extraction
+# Simple extraction (fast)
 python extract_simple.py
 
-# OCR on scanned PDFs
+# OCR version (much slower)
 python extract_ocr.py
 
-# Full comparison against 15 reports
+# Full comparison
 python compare_excel_vs_15pdfs.py
 ```
 
-## Purpose
+The comparison script saves OCR results locally, so the second time you run it will be a lot faster.
 
-This project was built while working with real hospital annual reports.  
-The goal was to extract structured data from scanned documents and verify the accuracy of compiled datasets.
+---
 
 ## Notes
 
-- OCR accuracy depends on scan quality. Results are approximate.
-- Processing 15 multi-page scanned PDFs can take significant time on the first run.
-- Intermediate OCR text files are saved so subsequent runs are much faster.
+- OCR is never perfect. Some numbers will be misread, especially if the scan quality is bad.
+- Running OCR on 15 full reports takes time. Be patient on the first run.
+- These scripts were written for a specific set of hospital annual reports, so you will need to change the file paths.
 
-## Future Improvements
+---
 
-- Better table detection from scanned pages
-- Improved OCR preprocessing (deskew, contrast, etc.)
-- Automated data cleaning and structuring
-- Support for multiple languages
+## Possible improvements
+
+- Better image preprocessing before OCR
+- Detecting tables more reliably
+- Cleaning up the extracted numbers automatically
+- Making the paths configurable through a config file instead of hardcoding them
