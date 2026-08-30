@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+myenv/
+venv/
+.env
+*.docx
+*.xlsx
+OCR_Comparison_Results/
+*.txt
+.DS_Store
+Thumbs.db
