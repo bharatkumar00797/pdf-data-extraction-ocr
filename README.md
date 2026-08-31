@@ -1,27 +1,33 @@
-# PDF Data Extraction & OCR Tools
+# PDF Data Extraction & Accuracy Analysis
 
-A small collection of Python scripts I built to work with scanned PDF reports.
+This repository contains a set of Python tools developed for extracting data from scanned PDF documents and measuring the accuracy of compiled datasets against original source files.
 
-I needed to pull data out of a bunch of old annual reports (most of them were just scanned images) and then check how accurate a compiled Excel version was against the originals. These scripts helped me do that.
-
----
-
-## What it does
-
-- Extract text from normal PDFs
-- Run OCR on scanned/image-based PDFs
-- Save the extracted text into Word and Excel files
-- Compare numbers from one clean PDF against text extracted from 15 scanned reports
+The project was created while working with a collection of hospital annual reports. Most of the source files were image-based scans, which required OCR processing before any meaningful comparison could be performed.
 
 ---
 
-## Files
+## Overview
 
-| Script | What it does |
-|--------|--------------|
-| `extract_simple.py` | Basic text extraction (works only if the PDF has selectable text) |
-| `extract_ocr.py` | Converts PDF pages to images and runs OCR |
-| `compare_excel_vs_15pdfs.py` | OCRs all 15 reports and checks which numbers from the Excel PDF appear in them |
+The tools support the following workflow:
+
+1. Extract text from standard (text-based) PDFs
+2. Perform OCR on scanned PDF pages
+3. Convert extracted content into Word and Excel formats
+4. Compare a compiled Excel/PDF dataset against the original 15 source reports
+5. Calculate match rate and overall data accuracy
+6. Generate detailed difference reports
+
+---
+
+## Scripts
+
+| Script | Description |
+|--------|-------------|
+| `extract_simple.py` | Extracts text from PDFs that contain selectable text and exports results to Word and Excel |
+| `extract_ocr.py` | Converts scanned PDF pages into images and applies OCR |
+| `compare_excel_vs_15pdfs.py` | Performs OCR on multiple reports and compares extracted numbers against a compiled file |
+| `data_difference_checker.py` | Compares character counts, word counts, and unique numbers between an original text source and a processed file |
+| `full_15pdf_accuracy_checker.py` | Starts from the original 15 PDF files, extracts all unique numbers, and calculates match rate against the target Excel/PDF |
 
 ---
 
@@ -31,54 +37,70 @@ I needed to pull data out of a bunch of old annual reports (most of them were ju
 pip install -r requirements.txt
 ```
 
-You also need two things installed on your system:
+System dependencies:
 
-1. **Tesseract OCR**  
-   Download the Windows installer from here:  
-   https://github.com/UB-Mannheim/tesseract/wiki
+- **Tesseract OCR** — [Windows installer](https://github.com/UB-Mannheim/tesseract/wiki)
+- **Poppler** — required by `pdf2image` for converting PDF pages to images
 
-2. **Poppler** (needed by pdf2image)  
-   Get the Windows build and extract it somewhere simple like `C:\poppler`
-
-After installing, open the scripts and update these two lines:
+After installation, update the following paths inside the relevant scripts:
 
 ```python
 TESSERACT_PATH = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 POPPLER_PATH   = r"C:\poppler\Library\bin"
 ```
 
-Also change the folder paths at the top of each script to point to your own PDF files.
+Also update the input folder and file paths to match your local directory structure.
 
 ---
 
-## How to run
+## Usage
 
 ```bash
-# Simple extraction (fast)
+# Basic text extraction
 python extract_simple.py
 
-# OCR version (much slower)
+# OCR extraction from scanned PDFs
 python extract_ocr.py
 
-# Full comparison
-python compare_excel_vs_15pdfs.py
+# Compare compiled file against previously extracted text
+python data_difference_checker.py
+
+# Full accuracy check starting from the original 15 PDFs
+python full_15pdf_accuracy_checker.py
 ```
 
-The comparison script saves OCR results locally, so the second time you run it will be a lot faster.
+---
+
+## Accuracy Calculation
+
+The primary accuracy metric is based on unique numerical values:
+
+```
+Accuracy = (Matched Numbers / Total Unique Numbers in Source) × 100
+```
+
+Reports include:
+
+- Total unique numbers found in the source files
+- Numbers successfully matched in the target file
+- Numbers missing from the target file
+- Numbers present only in the target file
+- Overall match rate / accuracy percentage
 
 ---
 
 ## Notes
 
-- OCR is never perfect. Some numbers will be misread, especially if the scan quality is bad.
-- Running OCR on 15 full reports takes time. Be patient on the first run.
-- These scripts were written for a specific set of hospital annual reports, so you will need to change the file paths.
+- OCR quality depends heavily on the resolution and clarity of the original scans.
+- The first run of any OCR-based script can take a significant amount of time.
+- Intermediate OCR text files are saved locally so subsequent runs are much faster.
+- These scripts were written for a specific set of annual reports and will require path updates for use with other documents.
 
 ---
 
-## Possible improvements
+## Future Improvements
 
-- Better image preprocessing before OCR
-- Detecting tables more reliably
-- Cleaning up the extracted numbers automatically
-- Making the paths configurable through a config file instead of hardcoding them
+- Image preprocessing (deskew, contrast enhancement) before OCR
+- More robust table structure detection
+- Configurable paths through an external settings file
+- Per-document accuracy breakdown
