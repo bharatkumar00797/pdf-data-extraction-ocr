@@ -89,6 +89,16 @@ Reports include:
 
 ---
 
+## Output
+
+Each analysis script generates:
+
+- A detailed text report
+- An Excel summary with matched, missing, and extra values
+- Clear accuracy percentage for quick review
+
+---
+
 ## Notes
 
 - OCR quality depends heavily on the resolution and clarity of the original scans.
